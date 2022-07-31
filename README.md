@@ -441,7 +441,7 @@ Una vez finalizado, podremos ver como se aplican las validaciones si intentamos 
 
 Ejercicio terminado en la rama [capsula-mod-5-terminado](https://github.com/DH-Esp-Frontend/ctd-fe3-s8-c22-capsulas-tienda-libre/tree/capsula-mod-5-terminado)
 
-## Capsula Modulo 6 - React Hook Form
+## Capsula Modulo 6 - React Hook Form - Forms Avanzados
 
 En esta última cápsula vamos a agregar un campo dinámico a nuestro formulario, que nos permitirá elegir una o más categorías asociadas a nuestra consulta. Para ello, utilizaremos el hook useFieldArray que ya conocemos. Además, agregaremos la validación correspondiente para este nuevo campo.
 
