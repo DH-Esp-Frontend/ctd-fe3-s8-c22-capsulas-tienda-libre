@@ -45,6 +45,14 @@ export const TEXTS_BY_LANGUAGE = {
         TYCS: "I accept the terms and conditions",
       },
       SEND_BUTTON: "SEND",
+      ERRORS: {
+        NAME: "Name is required",
+        EMAIL: "Email ir required",
+        COUNTRY: "Please select a country",
+        GENDER: "Please choose your gender",
+        QUESTION: "You question must have at least 10 characters",
+        TYCS: "You must accept the terms and conditions",
+      },
     },
   },
   [ES_ES]: {
@@ -76,6 +84,14 @@ export const TEXTS_BY_LANGUAGE = {
         TYCS: "Acepto los términos y condiciones",
       },
       SEND_BUTTON: "ENVIAR CONSULTA",
+      ERRORS: {
+        NAME: "El nombre es obligatorio",
+        EMAIL: "El email es obligatorio",
+        COUNTRY: "Por favor elige un país",
+        GENDER: "Por favor escoge tu género",
+        QUESTION: "Tu pregunta debe tener al menos 10 caracteres",
+        TYCS: "Debes aceptar los términos y condiciones",
+      },
     },
   },
   [PT_BR]: {
@@ -107,6 +123,14 @@ export const TEXTS_BY_LANGUAGE = {
         TYCS: "Aceito os termos e condições",
       },
       SEND_BUTTON: "ENVIAR CONSULTA",
+      ERRORS: {
+        NAME: "O nome é obrigatório",
+        EMAIL: "E-mail é necessário",
+        COUNTRY: "Por favor, selecione um país",
+        GENDER: "Por favor, escolha seu gênero",
+        QUESTION: "Sua pergunta deve ter pelo menos 10 caracteres",
+        TYCS: "Você deve aceitar os termos e condições",
+      },
     },
   },
 };
