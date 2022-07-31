@@ -438,3 +438,191 @@ return (
 ```
 
 Una vez finalizado, podremos ver como se aplican las validaciones si intentamos enviarlo con algún campo inválido. Por otra parte, si todos los campos son correctos, veremos el alert con la informacion ingresada.
+
+Ejercicio terminado en la rama [capsula-mod-5-terminado](https://github.com/DH-Esp-Frontend/ctd-fe3-s8-c22-capsulas-tienda-libre/tree/capsula-mod-5-terminado)
+
+## Capsula Modulo 6 - React Hook Form
+
+En esta última cápsula vamos a agregar un campo dinámico a nuestro formulario, que nos permitirá elegir una o más categorías asociadas a nuestra consulta. Para ello, utilizaremos el hook useFieldArray que ya conocemos. Además, agregaremos la validación correspondiente para este nuevo campo.
+
+Las posibles categorías se encuentran dentro de un array de elementos, por lo que cada item del campo dinámico se comportará como un Select.
+
+En primer lugar, agregamos las dependencias que vamos a utilizar en el archivo _contact.tsx_
+
+```jsx
+// Importamos Head para poder agregar Google Fonts
+import Head from "next/head";
+//...
+import {
+  useForm,
+  Controller,
+  UseControllerProps,
+  useController,
+  // Importamos el hook useFieldArray
+  useFieldArray,
+} from "react-hook-form";
+// Importamos el resolver para agregar las validaciones
+// Importamos el componente Icon que utilizaremos en nuestro
+// campo dinamico
+import Icon from "@mui/material/Icon";
+```
+
+Ahora, ya que vamos a reutilizar nuestro input en cada elemento que se cree, vamos a crear un componente que podamos reutilizar de forma sencilla:
+
+```jsx
+// Creamos un Wrapper para poder reutilizarlo en cada elemento que se cree dentro del campo dinámico
+const SelectWrapper = ({
+  control,
+  name,
+  options = [],
+  removeItem,
+  errors,
+  ...props
+}: UseControllerProps<SelectProps>) => {
+  // Utilizamos el hook useController en reemplazo
+  // del componente
+  const { field } = useController({
+    control,
+    name,
+  });
+
+  return (
+    <>
+      <Box
+        key={field.id}
+        gap={2}
+        sx={{
+          marginBottom: 2,
+          alignItems: "center",
+          display: "flex",
+        }}
+      >
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          sx={{ minWidth: 200 }}
+          {...props}
+          {...field}
+        >
+          {/* Creamos el listado de opciones que va dentro del
+              dropdown */}
+          {options.map((option) => (
+            <MenuItem key={option} value={option}>
+              {option}
+            </MenuItem>
+          ))}
+        </Select>
+        {/* Agregamos un botón al lado del input para poder remover el elemento */}
+        <Icon color="primary" onClick={removeItem}>
+          remove_circle
+        </Icon>
+      </Box>
+      {/* Agregamos un mensaje de error en caso de que lo haya */}
+      {errors && <small>{errors.value.message}</small>}
+    </>
+  );
+};
+```
+
+Por su parte, vamos a actualizar nuestro _schema_ de validaciones, agregando este nuevo campo:
+
+```jsx
+const schema = yup
+  .object({
+    name: yup.string().required(CONTACT.ERRORS.NAME),
+    email: yup.string().required(CONTACT.ERRORS.EMAIL),
+    country: yup
+      .string()
+      .oneOf(countriesNames)
+      .required(CONTACT.ERRORS.COUNTRY),
+    gender: yup
+      .string()
+      .oneOf(["male", "female", "other"])
+      .required(CONTACT.ERRORS.GENDER),
+    question: yup.string().min(10).required(CONTACT.ERRORS.QUESTION),
+    tycs: yup
+      .boolean()
+      .test("OK", CONTACT.ERRORS.TYCS, (value) => value === true),
+    // Agregamos la validación correspondiente para el nuevo campo.
+    // Vamos a realizar dos validaciones: primero, que al menos se haya creado
+    // 1 elemento y segundo, que cada elemento tenga una opción de las posibles.
+    categories: yup
+      .array()
+      .of(
+        yup.object({
+          value: yup
+            .string()
+            .oneOf(
+              CONTACT.FIELDS.CATEGORIES_OPTIONS,
+              CONTACT.ERRORS.CATEGORIES
+            ),
+        })
+      )
+      .min(1, CONTACT.ERRORS.CATEGORIES),
+  })
+  .required();
+```
+
+Con esto, ya estamos preparados para crear nuestro campo dinámico. El primer paso, es utilizar el hook _useFieldArray_ para acceder a las propiedades y métodos que necesitamos:
+
+```jsx
+// Utilizando useFieldArray, obtenemos la propiedad "fields" que
+// contendrá nuestros elementos. Además, obtenemos los métodos para
+// agregar y remover elementos.
+const { fields, append, remove } = useFieldArray({
+  name: "categories",
+  control,
+});
+```
+
+Por su parte, vamos a crear los callbacks que ejecutaremos al agregar/eliminar elementos
+
+```jsx
+// Creamos los callbacks para agregar y remover items
+const addItem = () => append({ value: "" });
+const removeItem = (index: number) => remove(index);
+```
+
+Finalmente, creams nuestro nuevo campo dinámico dentro del formulario:
+
+```jsx
+{
+  /* Agregamos nuestro nuevo campo dinámico */
+}
+<FormGroup>
+  <InputLabel id="demo-simple-select-label">
+    {CONTACT.FIELDS.CATEGORIES}
+  </InputLabel>
+  {/* Mediante este ícono podemos crear nuevos elementos */}
+  <Icon
+    color="primary"
+    onClick={addItem}
+    sx={{ marginBottom: 2, marginTop: 2 }}
+  >
+    add_circle
+  </Icon>
+  {/* Recorremos el array de elementos creador y por cada
+                    uno creamos un Select utilizando el wrapper que creamos
+                    anteriormente */}
+  {fields.map((field, index) => (
+    <SelectWrapper
+      key={field.id}
+      name={`categories.${index}.value`}
+      placeholder="Nombre del perfil"
+      control={control}
+      options={CONTACT.FIELDS.CATEGORIES_OPTIONS}
+      // Acá verificamos si ese elemento puntual tiene un error
+      // y lo pasamos para que pueda mostrarse el mensaje
+      errors={errors.categories?.[index]}
+      // Le pasamos el callback que va en el botón de remover
+      removeItem={() => removeItem(index)}
+    />
+  ))}
+  {/* Aquí creamos un mensaje de error (para todo el campo) y lo mostramos si corresponde */}
+  {errors.categories && <small>{errors.categories.message}</small>}
+</FormGroup>;
+```
+
+Con esto, podemos comprobar como tenemos la posiblidad de agregar/quitar elementos y seleccionar las opciones. Además, podemos probar las distintas validaciones así como verificar el envío del formulario si todos los datos son correctos.
+
+Ejercicio terminado en la rama [capsula-mod-6-terminado](https://github.com/DH-Esp-Frontend/ctd-fe3-s8-c22-capsulas-tienda-libre/tree/capsula-mod-6-terminado)
