@@ -21,3 +21,14 @@ a {
 * {
   box-sizing: border-box;
 }
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+small {
+  padding-left: 1rem;
+  color: #d32f2f;
+}
