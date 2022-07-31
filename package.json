@@ -19,7 +19,8 @@
     "countries-list": "^2.6.1",
     "next": "12.2.0",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "react-hook-form": "^7.34.0"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.16.4",
